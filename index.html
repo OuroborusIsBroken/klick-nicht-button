@@ -22,6 +22,7 @@
         }
 
         .container {
+            position: relative;
             text-align: center;
             background: white;
             padding: 60px 40px;
@@ -29,6 +30,36 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             max-width: 500px;
             width: 100%;
+            overflow: hidden;
+        }
+
+        .star-field {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            top: -20px;
+            animation-name: fall;
+            animation-timing-function: linear;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes fall {
+            from {
+                transform: translateY(0);
+            }
+            to {
+                transform: translateY(var(--fall-distance, 300px));
+            }
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
         }
 
         h1 {
@@ -319,6 +350,7 @@
                 <div class="timer-text">Du hast den Button für</div>
                 <div class="timer" id="timerDisplay">00:00</div>
                 <div class="timer-text">nicht gedrückt. Anständig!</div>
+                <button class="restart-button" id="restartButton">Neustart</button>
             </div>
         </div>
     </div>
@@ -475,9 +507,10 @@
             const star = document.createElement('div');
             star.className = 'star';
             star.textContent = '⭐';
-            star.style.left = Math.random() * 100 + 'vw';
+            star.style.left = Math.random() * 100 + '%';
             star.style.fontSize = (10 + Math.random() * 18) + 'px';
             star.style.opacity = 0.5 + Math.random() * 0.5;
+            star.style.setProperty('--fall-distance', (starField.clientHeight + 40) + 'px');
             const duration = 4 + Math.random() * 6;
             star.style.animationDuration = duration + 's';
             starField.appendChild(star);
