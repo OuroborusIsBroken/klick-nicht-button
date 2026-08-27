@@ -197,6 +197,7 @@
     </style>
 </head>
 <body>
+    <div class="star-field" id="starField"></div>
     <div class="container">
         <h1>🚫 Klick nicht den Button!</h1>
 
@@ -354,6 +355,26 @@
                 closeRestartModal();
             }
         });
+
+        /**
+         * Sterne-Regen im Hintergrund erzeugen
+         */
+        const starField = document.getElementById('starField');
+
+        function spawnStar() {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.textContent = '⭐';
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.fontSize = (10 + Math.random() * 18) + 'px';
+            star.style.opacity = 0.5 + Math.random() * 0.5;
+            const duration = 4 + Math.random() * 6;
+            star.style.animationDuration = duration + 's';
+            starField.appendChild(star);
+            setTimeout(() => star.remove(), duration * 1000);
+        }
+
+        setInterval(spawnStar, 150);
 
         // Timer beim Laden starten
         startTimer();
