@@ -204,6 +204,64 @@
             }
         }
 
+        .rain-field {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .raindrop {
+            position: absolute;
+            top: -60px;
+            width: 2px;
+            height: 60px;
+            background: linear-gradient(to bottom, transparent, rgba(174, 214, 241, 0.85));
+            animation: rainfall linear infinite;
+        }
+
+        @keyframes rainfall {
+            from {
+                transform: translate(0, 0);
+            }
+            to {
+                transform: translate(-40px, 110vh);
+            }
+        }
+
+        .butterfly-field {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .butterfly {
+            position: absolute;
+            bottom: -30px;
+            animation: flutter linear infinite;
+        }
+
+        @keyframes flutter {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(30px, -30vh) rotate(15deg);
+            }
+            50% {
+                transform: translate(-30px, -55vh) rotate(-15deg);
+            }
+            75% {
+                transform: translate(30px, -80vh) rotate(15deg);
+            }
+            100% {
+                transform: translate(-20px, -115vh) rotate(0deg);
+            }
+        }
+
         .container,
         .modal {
             position: relative;
@@ -213,6 +271,8 @@
 </head>
 <body>
     <div class="star-field" id="starField"></div>
+    <div class="rain-field" id="rainField"></div>
+    <div class="butterfly-field" id="butterflyField"></div>
     <div class="container">
         <h1>🚫 Klick nicht den Button!</h1>
 
@@ -345,6 +405,44 @@
         }
 
         setInterval(spawnStar, 150);
+
+        /**
+         * Regen im Hintergrund erzeugen
+         */
+        const rainField = document.getElementById('rainField');
+
+        function spawnRaindrop() {
+            const drop = document.createElement('div');
+            drop.className = 'raindrop';
+            drop.style.left = Math.random() * 110 + 'vw';
+            drop.style.height = (30 + Math.random() * 40) + 'px';
+            drop.style.opacity = 0.4 + Math.random() * 0.5;
+            const duration = 0.6 + Math.random() * 0.6;
+            drop.style.animationDuration = duration + 's';
+            rainField.appendChild(drop);
+            setTimeout(() => drop.remove(), duration * 1000);
+        }
+
+        setInterval(spawnRaindrop, 40);
+
+        /**
+         * Schmetterlinge im Hintergrund erzeugen
+         */
+        const butterflyField = document.getElementById('butterflyField');
+
+        function spawnButterfly() {
+            const butterfly = document.createElement('div');
+            butterfly.className = 'butterfly';
+            butterfly.textContent = '🦋';
+            butterfly.style.left = Math.random() * 100 + 'vw';
+            butterfly.style.fontSize = (16 + Math.random() * 16) + 'px';
+            const duration = 8 + Math.random() * 6;
+            butterfly.style.animationDuration = duration + 's';
+            butterflyField.appendChild(butterfly);
+            setTimeout(() => butterfly.remove(), duration * 1000);
+        }
+
+        setInterval(spawnButterfly, 2000);
 
         // Timer beim Laden starten
         startTimer();
