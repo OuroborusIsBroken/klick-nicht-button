@@ -189,27 +189,137 @@
             box-shadow: none;
         }
 
-        .restart-button:hover {
-            background: #f5f5f5;
-            border-color: #ccc;
-            box-shadow: none;
+        .rain-field {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .raindrop {
+            position: absolute;
+            top: -60px;
+            width: 2px;
+            height: 60px;
+            background: linear-gradient(to bottom, transparent, rgba(174, 214, 241, 0.85));
+            animation: rainfall linear infinite;
+        }
+
+        @keyframes rainfall {
+            from {
+                transform: translate(0, 0);
+            }
+            to {
+                transform: translate(-40px, 110vh);
+            }
+        }
+
+        .butterfly-field {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .butterfly {
+            position: absolute;
+            bottom: -30px;
+            animation: flutter linear infinite;
+        }
+
+        @keyframes flutter {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(30px, -30vh) rotate(15deg);
+            }
+            50% {
+                transform: translate(-30px, -55vh) rotate(-15deg);
+            }
+            75% {
+                transform: translate(30px, -80vh) rotate(15deg);
+            }
+            100% {
+                transform: translate(-20px, -115vh) rotate(0deg);
+            }
+        }
+
+        .page,
+        .modal {
+            position: relative;
+            z-index: 1;
+        }
+
+        .page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .banner-90s {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px;
+            box-sizing: border-box;
+            background: repeating-linear-gradient(45deg, red, orange, yellow, limegreen, dodgerblue, violet, red);
+            background-size: 300% 300%;
+            animation: rainbow-shift 3s linear infinite;
+            border: 4px double #000;
+            text-align: center;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-weight: 900;
+            font-size: 22px;
+            color: #fff;
+            text-shadow: 2px 2px 0 #000;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+        }
+
+        .banner-90s span {
+            display: inline-block;
+            animation: blink-banner 0.6s infinite;
+        }
+
+        @keyframes rainbow-shift {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 300% 50%;
+            }
+        }
+
+        @keyframes blink-banner {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.25;
+            }
         }
     </style>
 </head>
 <body>
     <div class="star-field" id="starField"></div>
-    <div class="container">
-        <h1>🚫 Klick nicht den Button!</h1>
+    <div class="rain-field" id="rainField"></div>
+    <div class="butterfly-field" id="butterflyField"></div>
+    <div class="page">
+        <div class="banner-90s">🔥<span>Hottest shit! get here</span>🔥</div>
+        <div class="container">
+            <h1>🚫 Klick nicht den Button!</h1>
 
-        <div class="button-wrapper">
-            <button id="dangerButton">Klick mich</button>
-        </div>
+            <div class="button-wrapper">
+                <button id="dangerButton">Klick mich</button>
+            </div>
 
-        <div class="timer-section" id="timerSection">
-            <div class="timer-text">Du hast den Button für</div>
-            <div class="timer" id="timerDisplay">00:00</div>
-            <div class="timer-text">nicht gedrückt. Anständig!</div>
-            <button class="restart-button" id="restartButton">Neustart</button>
+            <div class="timer-section" id="timerSection">
+                <div class="timer-text">Du hast den Button für</div>
+                <div class="timer" id="timerDisplay">00:00</div>
+                <div class="timer-text">nicht gedrückt. Anständig!</div>
+            </div>
         </div>
     </div>
 
@@ -375,6 +485,44 @@
         }
 
         setInterval(spawnStar, 150);
+
+        /**
+         * Regen im Hintergrund erzeugen
+         */
+        const rainField = document.getElementById('rainField');
+
+        function spawnRaindrop() {
+            const drop = document.createElement('div');
+            drop.className = 'raindrop';
+            drop.style.left = Math.random() * 110 + 'vw';
+            drop.style.height = (30 + Math.random() * 40) + 'px';
+            drop.style.opacity = 0.4 + Math.random() * 0.5;
+            const duration = 0.6 + Math.random() * 0.6;
+            drop.style.animationDuration = duration + 's';
+            rainField.appendChild(drop);
+            setTimeout(() => drop.remove(), duration * 1000);
+        }
+
+        setInterval(spawnRaindrop, 40);
+
+        /**
+         * Schmetterlinge im Hintergrund erzeugen
+         */
+        const butterflyField = document.getElementById('butterflyField');
+
+        function spawnButterfly() {
+            const butterfly = document.createElement('div');
+            butterfly.className = 'butterfly';
+            butterfly.textContent = '🦋';
+            butterfly.style.left = Math.random() * 100 + 'vw';
+            butterfly.style.fontSize = (16 + Math.random() * 16) + 'px';
+            const duration = 8 + Math.random() * 6;
+            butterfly.style.animationDuration = duration + 's';
+            butterflyField.appendChild(butterfly);
+            setTimeout(() => butterfly.remove(), duration * 1000);
+        }
+
+        setInterval(spawnButterfly, 2000);
 
         // Timer beim Laden starten
         startTimer();
