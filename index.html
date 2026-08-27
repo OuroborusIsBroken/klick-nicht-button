@@ -65,6 +65,19 @@
             transform: translateY(-1px);
         }
 
+        button.blinking {
+            animation: blink 0.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.35;
+            }
+        }
+
         .timer-section {
             opacity: 0;
             transition: opacity 0.5s ease-in;
@@ -232,6 +245,39 @@
         const timerSection = document.getElementById('timerSection');
         const timerDisplay = document.getElementById('timerDisplay');
 
+        const GROWTH_INTERVAL_SECONDS = 5;
+        const MAX_GROWTH_STAGE = 20;
+        const REDDEN_FULL_STAGE = 12;
+        const BLINK_START_SECONDS = 60;
+
+        const START_COLOR_1 = [102, 126, 234]; // #667eea
+        const START_COLOR_2 = [118, 75, 162];  // #764ba2
+        const END_COLOR_1 = [220, 38, 38];      // kräftiges Rot
+        const END_COLOR_2 = [153, 27, 27];      // dunkles Rot
+
+        function mixChannel(start, end, t) {
+            return Math.round(start + (end - start) * t);
+        }
+
+        function mixColor(startRgb, endRgb, t) {
+            return `rgb(${mixChannel(startRgb[0], endRgb[0], t)}, ${mixChannel(startRgb[1], endRgb[1], t)}, ${mixChannel(startRgb[2], endRgb[2], t)})`;
+        }
+
+        /**
+         * Button alle 5 Sekunden größer und röter werden lassen,
+         * ab 60 Sekunden zusätzlich blinken lassen
+         */
+        function updateButtonAppearance(elapsedSeconds) {
+            const stage = Math.min(Math.floor(elapsedSeconds / GROWTH_INTERVAL_SECONDS), MAX_GROWTH_STAGE);
+            const scale = 1 + stage * 0.08;
+            const redness = Math.min(stage / REDDEN_FULL_STAGE, 1);
+
+            button.style.transform = `scale(${scale})`;
+            button.style.background = `linear-gradient(135deg, ${mixColor(START_COLOR_1, END_COLOR_1, redness)} 0%, ${mixColor(START_COLOR_2, END_COLOR_2, redness)} 100%)`;
+
+            button.classList.toggle('blinking', elapsedSeconds >= BLINK_START_SECONDS);
+        }
+
         /**
          * Timer starten beim Laden der Seite
          */
@@ -247,6 +293,8 @@
                     timerDisplay.textContent =
                         String(minutes).padStart(2, '0') + ':' +
                         String(seconds).padStart(2, '0');
+
+                    updateButtonAppearance(elapsed);
                 }
             }, 100);
         }
